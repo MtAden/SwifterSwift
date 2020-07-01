@@ -9,6 +9,9 @@
 import XCTest
 @testable import SwifterSwift
 
+#if canImport(CoreGraphics)
+import CoreGraphics
+
 final class CGVectorExtensionsTests: XCTestCase {
 
     func testAngle() {
@@ -91,3 +94,5 @@ final class CGVectorExtensionsTests: XCTestCase {
         XCTAssertEqual(vector4.dy, sqrt(3), accuracy: cgFloatPrecision)
     }
 }
+
+#endif

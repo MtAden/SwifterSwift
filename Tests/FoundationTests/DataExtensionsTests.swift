@@ -9,14 +9,17 @@
 import XCTest
 @testable import SwifterSwift
 
+#if canImport(Foundation)
+import Foundation
+
 final class DataExtensionsTests: XCTestCase {
 
-	func testString() {
-		let dataFromString = "hello".data(using: .utf8)
-		XCTAssertNotNil(dataFromString)
-		XCTAssertNotNil(dataFromString?.string(encoding: .utf8))
-		XCTAssertEqual(dataFromString?.string(encoding: .utf8), "hello")
-	}
+    func testString() {
+        let dataFromString = "hello".data(using: .utf8)
+        XCTAssertNotNil(dataFromString)
+        XCTAssertNotNil(dataFromString?.string(encoding: .utf8))
+        XCTAssertEqual(dataFromString?.string(encoding: .utf8), "hello")
+    }
 
     func testBytes() {
         let dataFromString = "hello".data(using: .utf8)
@@ -46,3 +49,5 @@ final class DataExtensionsTests: XCTestCase {
     }
 
 }
+
+#endif

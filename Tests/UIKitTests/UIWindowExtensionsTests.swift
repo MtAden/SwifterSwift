@@ -6,9 +6,11 @@
 //  Copyright © 2018 SwifterSwift
 //
 
-#if os(iOS)
 import XCTest
 @testable import SwifterSwift
+
+#if canImport(UIKit) && os(iOS)
+import UIKit
 
 final class UIWindowExtensionsTests: XCTestCase {
 
@@ -34,8 +36,9 @@ final class UIWindowExtensionsTests: XCTestCase {
             XCTAssertEqual(window.rootViewController!, viewController)
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
 }
+
 #endif

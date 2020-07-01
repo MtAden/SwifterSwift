@@ -6,9 +6,11 @@
 //  Copyright © 2018 SwifterSwift
 //
 
-#if os(iOS)
 import XCTest
 @testable import SwifterSwift
+
+#if os(iOS) && !os(watchOS)
+import UIKit
 
 final class UIGestureRecognizerExtensionsTests: XCTestCase {
 
@@ -16,26 +18,28 @@ final class UIGestureRecognizerExtensionsTests: XCTestCase {
         let view = UIImageView()
         let tap = UITapGestureRecognizer()
 
-        //First Baseline Assertion
-        XCTAssert(view.gestureRecognizers == nil)
-        XCTAssert(tap.view == nil)
+        // First Baseline Assertion
+        XCTAssertNil(view.gestureRecognizers)
+        XCTAssertNil(tap.view)
 
         view.addGestureRecognizer(tap)
 
-        //Verify change
-        XCTAssertFalse(view.gestureRecognizers == nil)
-        XCTAssertFalse(tap.view == nil)
+        // Verify change
+        XCTAssertNotNil(view.gestureRecognizers)
+        XCTAssertNotNil(tap.view)
 
-        //Second Baseline Assertion
-        XCTAssertFalse((view.gestureRecognizers?.count ?? 0) == 0)
+        // Second Baseline Assertion
+        XCTAssertNotEqual(view.gestureRecognizers?.count, 0)
         XCTAssertFalse(view.gestureRecognizers?.isEmpty ?? true)
 
         tap.removeFromView()
 
-        //Verify change
-        XCTAssert((view.gestureRecognizers?.count ?? 1) == 0)
+        // Verify change
+        XCTAssertEqual(view.gestureRecognizers?.count, 0)
         XCTAssert(view.gestureRecognizers?.isEmpty ?? false)
-        XCTAssert(tap.view == nil)
+        XCTAssertNil(tap.view)
     }
+
 }
+
 #endif

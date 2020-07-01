@@ -9,33 +9,50 @@
 import XCTest
 @testable import SwifterSwift
 
+#if canImport(Foundation)
+import Foundation
+
 final class URLExtensionsTests: XCTestCase {
 
-	var url = URL(string: "https://www.google.com")!
-	let params = ["q": "swifter swift"]
-	let queryUrl = URL(string: "https://www.google.com?q=swifter%20swift")!
+    var url = URL(string: "https://www.google.com")!
+    let params = ["q": "swifter swift"]
+    let queryUrl = URL(string: "https://www.google.com?q=swifter%20swift")!
 
-	func testAppendingQueryParameters() {
-		XCTAssertEqual(url.appendingQueryParameters(params), queryUrl)
-	}
+    func testQueryParameters() {
+        let url = URL(string: "https://www.google.com?q=swifter%20swift&steve=jobs&empty")!
+        guard let parameters = url.queryParameters else {
+            XCTAssert(false)
+            return
+        }
 
-	func testAppendQueryParameters() {
-		url.appendQueryParameters(params)
-		XCTAssertEqual(url, queryUrl)
-	}
+        XCTAssertEqual(parameters.count, 2)
+        XCTAssertEqual(parameters["q"], "swifter swift")
+        XCTAssertEqual(parameters["steve"], "jobs")
+        XCTAssertNil(parameters["empty"])
+    }
 
-	func testQueryParameters() {
-		let url = URL(string: "https://www.google.com?q=swifter%20swift&steve=jobs&empty")!
-		guard let parameters = url.queryParameters else {
-			XCTAssert(false)
-			return
-		}
+    func testOptionalStringInitializer() {
+        XCTAssertNil(URL(string: nil, relativeTo: nil))
+        XCTAssertNil(URL(string: nil))
 
-		XCTAssertEqual(parameters.count, 2)
-		XCTAssertEqual(parameters["q"], "swifter swift")
-		XCTAssertEqual(parameters["steve"], "jobs")
-		XCTAssertEqual(parameters["empty"], nil)
-	}
+        let baseURL = URL(string: "https://www.example.com")
+        XCTAssertNotNil(baseURL)
+        XCTAssertNil(URL(string: nil, relativeTo: baseURL))
+
+        let string = "/index.html"
+        let optionalString: String? = string
+        XCTAssertEqual(URL(string: optionalString, relativeTo: baseURL), URL(string: string, relativeTo: baseURL))
+        XCTAssertEqual(URL(string: optionalString, relativeTo: baseURL)?.absoluteString, "https://www.example.com/index.html")
+    }
+
+    func testAppendingQueryParameters() {
+        XCTAssertEqual(url.appendingQueryParameters(params), queryUrl)
+    }
+
+    func testAppendQueryParameters() {
+        url.appendQueryParameters(params)
+        XCTAssertEqual(url, queryUrl)
+    }
 
     func testValueForQueryKey() {
         let url = URL(string: "https://google.com?code=12345&empty")!
@@ -45,8 +62,8 @@ final class URLExtensionsTests: XCTestCase {
         let otherResult = url.queryValue(for: "other")
 
         XCTAssertEqual(codeResult, "12345")
-        XCTAssertEqual(emtpyResult, nil)
-        XCTAssertEqual(otherResult, nil)
+        XCTAssertNil(emtpyResult)
+        XCTAssertNil(otherResult)
     }
 
     func testDeletingAllPathComponents() {
@@ -61,15 +78,15 @@ final class URLExtensionsTests: XCTestCase {
         XCTAssertEqual(url.absoluteString, "https://domain.com/")
     }
 
-	#if os(iOS) || os(tvOS)
-	func testThumbnail() {
-		XCTAssertNil(url.thumbnail())
+    #if os(iOS) || os(tvOS)
+    func testThumbnail() {
+        XCTAssertNil(url.thumbnail())
 
-		let videoUrl = Bundle(for: URLExtensionsTests.self).url(forResource: "big_buck_bunny_720p_1mb", withExtension: "mp4")!
-		XCTAssertNotNil(videoUrl.thumbnail())
-		XCTAssertNotNil(videoUrl.thumbnail(fromTime: 1))
-	}
-	#endif
+        let videoUrl = Bundle(for: URLExtensionsTests.self).url(forResource: "big_buck_bunny_720p_1mb", withExtension: "mp4")!
+        XCTAssertNotNil(videoUrl.thumbnail())
+        XCTAssertNotNil(videoUrl.thumbnail(fromTime: 1))
+    }
+    #endif
 
     func testDropScheme() {
         let urls: [String: String?] = [
@@ -86,9 +103,10 @@ final class URLExtensionsTests: XCTestCase {
 
         urls.forEach { input, expected in
             guard let url = URL(string: input) else { return XCTFail("Failed to initialize URL.") }
-            XCTAssertEqual(url.droppedScheme()?.absoluteString,
-                           expected,
-                           "input url: \(input)")
+            XCTAssertEqual(url.droppedScheme()?.absoluteString, expected, "input url: \(input)")
         }
     }
+
 }
+
+#endif

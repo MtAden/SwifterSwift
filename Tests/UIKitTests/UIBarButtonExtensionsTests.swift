@@ -6,27 +6,42 @@
 //  Copyright © 2017 SwifterSwift
 //
 
-#if os(iOS) || os(tvOS)
-
 import XCTest
 @testable import SwifterSwift
 
+#if canImport(UIKit) && !os(watchOS)
+import UIKit
+
 final class UIBarButtonExtensionsTests: XCTestCase {
 
-	func testSelector() {}
+    func testFlexibleSpace() {
+        let space1 = UIBarButtonItem.flexibleSpace
+        let space2 = UIBarButtonItem.flexibleSpace
+        // Make sure two different instances are created
+        XCTAssert(space1 !== space2)
+    }
 
-	func testAddTargetForAction() {
+    func testSelector() {}
 
-		let barButton = UIBarButtonItem()
-		let selector = #selector(testSelector)
+    func testAddTargetForAction() {
 
-		barButton.addTargetForAction(self, action: selector)
+        let barButton = UIBarButtonItem()
+        let selector = #selector(testSelector)
 
-		let target = barButton.target as? UIBarButtonExtensionsTests
+        barButton.addTargetForAction(self, action: selector)
 
-		XCTAssertEqual(target, self)
-		XCTAssertEqual(barButton.action, selector)
-	}
+        let target = barButton.target as? UIBarButtonExtensionsTests
+
+        XCTAssertEqual(target, self)
+        XCTAssertEqual(barButton.action, selector)
+    }
+
+    func testFixedSpace() {
+        let width: CGFloat = 120
+        let barButtonItem = UIBarButtonItem.fixedSpace(width: width)
+        XCTAssertEqual(barButtonItem.width, width)
+    }
 
 }
+
 #endif
